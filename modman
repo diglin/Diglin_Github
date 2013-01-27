@@ -1,0 +1,5 @@
+src/app/etc/modules/Diglin_Github.xml	app/etc/modules/Diglin_Github.xml
+src/app/code/community/Diglin/Github	app/code/community/Diglin/Github
+src/app/deisgn/frontend/base/default/layout/github.xml	app/deisgn/frontend/base/default/layout/github.xml
+src/app/deisgn/frontend/base/default/template/github	app/deisgn/frontend/base/default/template/github
+src/lib/Oauth2	lib/Oauth2

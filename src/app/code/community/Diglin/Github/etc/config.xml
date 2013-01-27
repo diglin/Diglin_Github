@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <Diglin_Github>
+            <version>1.0.0.0</version>
+        </Diglin_Github>
+    </modules>
+
+    <default>
+        <github>
+            <config>
+                <enabled>1</enabled>
+            </config>
+        </github>
+    </default>
+
+
+    <global>
+        <fieldsets>
+            <customer_account>
+                <github_login>
+                    <create>1</create>
+                    <update>1</update>
+                </github_login>
+            </customer_account>
+        </fieldsets>
+        
+        <blocks>
+            <github>
+                <class>Diglin_Github_Block</class>
+            </github>
+        </blocks>
+
+        <helpers>
+            <github>
+                <class>Diglin_Github_Helper</class>
+            </github>
+        </helpers>
+        
+        <models>
+            <github>
+                <class>Diglin_Github_Model</class>
+                <resourceModel>github_mysql4</resourceModel>
+            </github>
+            <github_mysql4>
+                <class>Diglin_Github_Model_Mysql4</class>
+                <entities>
+                </entities>
+            </github_mysql4>
+        </models>
+        
+        <resources>
+            <github_setup>
+                <setup>
+                    <module>Diglin_Github</module>
+                    <class>Diglin_Github_Model_Resource_Setup</class>
+                </setup>
+            </github_setup>
+        </resources>
+    </global>
+
+    <frontend>
+        <layout>
+            <updates>
+                <github>
+                    <file>github.xml</file>
+                </github>
+            </updates>
+        </layout>
+        
+        <routers>
+            <github>
+                <use>standard</use>
+                <args>
+                    <module>Diglin_Github</module>
+                    <frontName>github</frontName>
+                </args>
+            </github>
+        </routers>
+        
+        <translate>
+            <modules>
+                <github>
+                    <files>
+                        <default>Diglin_Github.csv</default>
+                    </files>
+                </github>
+            </modules>
+        </translate>        
+    </frontend>
+
+    <adminhtml>
+    </adminhtml>
+
+    <admin>
+    </admin>
+</config>

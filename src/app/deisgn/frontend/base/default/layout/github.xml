@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <github_account_create>
+        <label>Github Customer Account Registration Form</label>
+        <remove name="right" />
+        <remove name="left" />
+
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+
+        <reference name="content">
+            <block type="github/account_register" name="github_account_register" as="github.account.register" template="github/customer/create.phtml">
+                <block type="page/html_wrapper" name="customer.form.register.fields.before" as="form_fields_before" translate="label">
+                    <label>Form Fields Before</label>
+                </block>
+            </block>
+        </reference>
+    </github_account_create>
+
+    <customer_account_login>
+        <reference name="form.additional.info">
+            <block type="core/template" name="login_github_button" as="login.github.button">
+                <action method="setTemplate" ifconfig="github/config/enabled">
+                    <template>github/customer/login.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </customer_account_login>
+
+    <customer_account_create>
+        <reference name="form.additional.info">
+            <block type="core/template" name="register_github_information" as="register.github.information">
+                <action method="setTemplate" ifconfig="github/config/enabled">
+                    <template>github/customer/fields.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </customer_account_create>
+    
+    <customer_account_index>
+        <reference name="customer_account_dashboard">
+            <block type="core/template" name="github_information" as="info1">
+                <action method="setTemplate" ifconfig="github/config/enabled">
+                    <template>github/customer/info.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </customer_account_index>
+    
+    <checkout_onepage_index>
+<!--         <reference name="checkout.onepage.login"> -->
+<!--             <block type="core/text_list" name="form.additional.info"> -->
+            <reference name="form.additional.info">
+                <block type="core/template" name="login_github_button" as="login.github.button">
+                    <action method="setTemplate" ifconfig="github/config/enabled">
+                        <template>github/customer/login.phtml</template>
+                    </action>
+                </block>
+            </reference>
+<!--             </block> -->
+<!--         </reference> -->
+    </checkout_onepage_index>
+</layout>
