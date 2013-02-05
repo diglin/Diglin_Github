@@ -1,14 +1,68 @@
 <?php
+/**
+ * Diglin
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ *
+ * @category    Diglin
+ * @package     Diglin_Github
+ * @copyright   Copyright (c) 2011-2013 Diglin (http://www.diglin.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
 require_once 'Mage/Customer/controllers/AccountController.php';
 
 class Diglin_Github_AccountController extends Mage_Customer_AccountController
 {
+    const XML_PATH_GITHUB_EXISTING_CUSTOMER_LINK_EMAIL_TEMPLATE = 'github/link_account/email_template';
+    const XML_PATH_GITHUB_EXISTING_CUSTOMER_LINK_EMAIL_ENTITY = 'github/link_account/email_identity';
+
     /**
      * Action list where need check enabled cookie
      *
      * @var array
      */
     protected $_cookieCheckActions = array('createpost');
+
+    /**
+     * Action predispatch
+     *
+     * Check customer authentication for some actions
+     */
+    public function preDispatch()
+    {
+        parent::preDispatch();
+
+        // The parent may block the dispatch
+        $this->setFlag('', 'no-dispatch', false);
+
+        if (!$this->getRequest()->isDispatched()) {
+            return;
+        }
+
+        $action = $this->getRequest()->getActionName();
+        $openActions = array(
+                'create',
+                'login',
+                'existing',
+                'confirmation'
+        );
+        $pattern = '/^(' . implode('|', $openActions) . ')/i';
+
+        if (!preg_match($pattern, $action)) {
+            if (!$this->_getSession()->authenticate($this)) {
+                $this->setFlag('', 'no-dispatch', true);
+            }
+        } else {
+            $this->_getSession()->setNoReferer(true);
+        }
+    }
 
     /**
      * Retrieve customer session model object
@@ -107,12 +161,7 @@ class Diglin_Github_AccountController extends Mage_Customer_AccountController
         $customer = $helper->getCustomer($githubId);
         if ($customer->getId()) {
             $this->_getSession()->setCustomerAsLoggedIn($customer);
-            $url = Mage::getUrl('customer/account/index', array('_secure'=>true));
-            if ($this->_getSession()->getBeforeAuthUrl()) {
-                $url = $this->_getSession()->getBeforeAuthUrl(true);
-            }
-            $this->_redirectUrl($url);
-            return;
+            $this->_loginPostRedirect();
         } else {
             $this->_redirect('github/account/create', array('_secure' => true));
         }
@@ -134,7 +183,7 @@ class Diglin_Github_AccountController extends Mage_Customer_AccountController
 
         if (empty($token) || empty($githubData)) {
             $session->addNotice($this->__('Please, login in Github before to try to register.'));
-            $this->_redirect('github/account/login',  array('_secure' => true));
+            $this->_redirect('customer/account/login',  array('_secure' => true));
             return;
         }
 
@@ -219,10 +268,7 @@ class Diglin_Github_AccountController extends Mage_Customer_AccountController
                     );
 
                     $successUrl = Mage::getUrl('customer/account/index', array('_secure'=>true));
-                    if ($this->_getSession()->getBeforeAuthUrl()) {
-                        $successUrl = $this->_getSession()->getBeforeAuthUrl(true);
-                    }
-                    $this->_redirectSuccess($successUrl);
+                    $this->_loginPostRedirect();
                     return;
                 }
 
@@ -243,5 +289,101 @@ class Diglin_Github_AccountController extends Mage_Customer_AccountController
         }
 
         $this->_redirectError(Mage::getUrl('*/*/create', array('_secure' => true)));
+    }
+
+    public function existingAction()
+    {
+        $customerEmail = $this->getRequest()->getParam('email');
+        $githubId = (int) $this->getRequest()->getParam('github_id');
+        $githubLogin = $this->getRequest()->getParam('github_login');
+        $helper = Mage::helper('github');
+
+        if (!Zend_Validate::is($customerEmail, 'EmailAddress')) {
+            $this->_getSession()->addError($this->__('Email Address is not valid!'));
+            $this->_redirect('*/*/create');
+            return;
+        }
+
+        $customer = Mage::getModel('customer/customer')
+            ->setWebsiteId(Mage::app()->getWebsite()->getId())
+            ->loadByEmail($customerEmail);
+
+        if ($customer->getId() && !$customer->getGithubLogin()) {
+
+            /* @var $confirmation Diglin_Github_Model_Confirmation */
+            $confirmation = Mage::getModel('github/confirmation');
+
+            $confirmation->load($customer->getId(), 'customer_id');
+
+            if ($confirmation->getId()) {
+                $confirmation->delete();
+                $confirmation->unsetData();
+            }
+
+            try {
+                $confirmation
+                    ->setKey(md5(uniqid()))
+                    ->setGithubLogin($githubLogin)
+                    ->setGithubId($githubId)
+                    ->setCustomerId($customer->getId())
+                    ->save();
+
+                $params = array(
+                        'github_confirmation' => $confirmation,
+                        'customer' => $customer,
+                        'back_url' => $this->_getSession()->getBeforeAuthUrl(),
+                );
+
+                $helper->sendEmailTemplate(self::XML_PATH_GITHUB_EXISTING_CUSTOMER_LINK_EMAIL_TEMPLATE, self::XML_PATH_GITHUB_EXISTING_CUSTOMER_LINK_EMAIL_ENTITY, $params, $customer);
+                $this->_getSession()->addSuccess($this->__('An email to confirm that this account belongs to you has been sent to your email address.'));
+                $this->_getSession()->addSuccess($this->__('Please, click on the link into the email to confirm the link between your Githug account and your shop\'s account'));
+            } catch (Exception $e) {
+                $this->_getSession()->addError($this->__('A problem occured while trying to send you the confirmation email. Please, contact us.'));
+                Mage::logException($e);
+                $this->_redirect('*/*/create');
+                return;
+            }
+        } else {
+            $this->_getSession()->addNotice($this->__('We are sorry, we didn\'t find your account in our database or your account is already linked to a Github account.'));
+            $this->_redirect('*/*/create');
+            return;
+        }
+
+        $this->_redirect('customer/account/login');
+    }
+
+    public function confirmationAction()
+    {
+        $confirmationKey = substr($this->getRequest()->getParam('key'), 0, 255);
+        //$backUrl = $this->getRequest()->getParam('back_url');
+        $customerId = (int)$this->getRequest()->getParam('id');
+
+        $customer = Mage::getModel('customer/customer')->load($customerId);
+        $confirmation = Mage::getModel('github/confirmation')->load($confirmationKey, 'key');
+
+        if ($customer->getId() && !$customer->getGithubLogin() && $confirmation->getId()) {
+            try {
+                $customer->setGithubId($confirmation->getGithubId())
+                    ->setGithubLogin($confirmation->getGithubLogin())
+                    ->save();
+
+                $confirmation->delete();
+
+                $this->_getSession()->setCustomerAsLoggedIn($customer);
+
+                $this->_getSession()->addSuccess($this->__('Congratulations! You are member of our private club :-)'));
+            } catch (Exception $e) {
+                $this->_getSession()->addError($this->__('A problem occured while trying to save your information.'));
+                Mage::logException($e);
+                $this->_redirect('customer/account/login');
+                return;
+            }
+        } else {
+            $this->_getSession()->addError($this->__('Sorry, information sent are invalid! Try again to login with your Github account and to recreate the linkage.'));
+            $this->_redirect('customer/account/login');
+            return;
+        }
+
+        $this->_redirect('customer/account/index');
     }
 }

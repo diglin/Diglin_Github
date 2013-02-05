@@ -1,0 +1,53 @@
+<?php
+/**
+ * Diglin
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ *
+ * @category    Diglin
+ * @package     Diglin_
+ * @copyright   Copyright (c) 2011-2012 Diglin (http://www.diglin.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/* @var $this Mage_Core_Block_Template */
+$grandParent = $this->getParentBlock()->getParentBlock();
+?>
+<form action="<?php echo $this->getUrl('*/*/existing') ?>" method="post" id="form-existing-customer" name="github_existing_customer">
+    <div class="fieldset">
+        <input type="hidden" name="github_id" id="github_id" value="<?php echo $this->escapeHtml($grandParent->getFormData()->getGithubId()); ?>" />
+        <input type="hidden" name="github_login" id="github_login" value="<?php echo $this->escapeHtml($grandParent->getFormData()->getGithubLogin()) ?>" />
+        <h2 class="legend"><?php echo $this->__('Existing Customer') ?></h2>
+        <div class="content">
+            <p><?php echo $this->__('You already have an account but want to link your github account to your shop\'s account?');?><br/>
+            <?php echo $this->__('Just fill in the email address field, you will receive a confirmation email with a link to proove your ownership.');?></p>
+        </div>
+
+        <ul class="form-list left">
+            <li class="fields">
+                <label for="email_address" class="required"><em>*</em><?php echo $this->__('Email Address') ?></label>
+                <div class="input-box">
+                    <input type="text" name="email" id="email_address" value="<?php echo $this->escapeHtml($grandParent->getFormData()->getEmail()) ?>" title="<?php echo $this->__('Email Address') ?>" class="input-text validate-email required-entry" />
+                </div>
+            </li>
+        </ul>
+        <div class="clearer"></div>
+    </div>
+
+    <div class="buttons-set">
+        <p class="required"><?php echo $this->__('* Required Fields') ?></p>
+        <p class="back-link"><a href="<?php echo $this->escapeUrl($this->getBackUrl()) ?>" class="back-link"><small>&laquo; </small><?php echo $this->__('Back') ?></a></p>
+        <button type="submit" title="<?php echo $this->__('Submit') ?>" class="button"><span><span><?php echo $this->__('Submit') ?></span></span></button>
+    </div>
+    <script type="text/javascript">
+    //<![CDATA[
+        var dataForm = new VarienForm('form-existing-customer', true);
+    //]]>
+    </script>
+</form>

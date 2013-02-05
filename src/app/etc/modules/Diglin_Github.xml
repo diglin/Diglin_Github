@@ -4,9 +4,6 @@
         <Diglin_Github>
             <active>true</active>
             <codePool>community</codePool>
-            <depends>
-                
-            </depends>
         </Diglin_Github>
     </modules>
 </config>

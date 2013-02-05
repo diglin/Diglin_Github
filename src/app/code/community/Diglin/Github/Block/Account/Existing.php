@@ -15,10 +15,11 @@
  * @copyright   Copyright (c) 2011-2013 Diglin (http://www.diglin.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class Diglin_Github_Model_Log
+class Diglin_Github_Block_Account_Existing extends Mage_Customer_Block_Form_Register
 {
-    public static function log($message, $level = null, $forceLog = false)
+
+    public function getPostActionUrl()
     {
-        Mage::log($message, $level, 'github.log', $forceLog);
+        return $this->getUrl('github/account/existing');
     }
 }

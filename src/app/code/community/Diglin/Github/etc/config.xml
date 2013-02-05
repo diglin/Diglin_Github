@@ -11,6 +11,10 @@
             <config>
                 <enabled>1</enabled>
             </config>
+            <link_account>
+                <email_identity>general</email_identity>
+                <email_template>github_existing_customer_link_email_template</email_template>
+            </link_account>
         </github>
     </default>
 
@@ -40,13 +44,16 @@
         <models>
             <github>
                 <class>Diglin_Github_Model</class>
-                <resourceModel>github_mysql4</resourceModel>
+                <resourceModel>github_resource</resourceModel>
             </github>
-            <github_mysql4>
-                <class>Diglin_Github_Model_Mysql4</class>
+            <github_resource>
+                <class>Diglin_Github_Model_Resource</class>
                 <entities>
+                    <confirmation>
+                        <table>github_confirmation</table>
+                    </confirmation>
                 </entities>
-            </github_mysql4>
+            </github_resource>
         </models>
         
         <resources>
@@ -57,6 +64,16 @@
                 </setup>
             </github_setup>
         </resources>
+        
+        <template>
+            <email>
+                <github_existing_customer_link_email_template translate="label" module="github">
+                    <label>Github Link Account Confirmation</label>
+                    <file>github/existing_customer_link_confirmation.html</file>
+                    <type>html</type>
+                </github_existing_customer_link_email_template>
+            </email>
+        </template>
     </global>
 
     <frontend>
@@ -88,10 +105,4 @@
             </modules>
         </translate>        
     </frontend>
-
-    <adminhtml>
-    </adminhtml>
-
-    <admin>
-    </admin>
 </config>

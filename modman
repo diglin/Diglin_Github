@@ -3,3 +3,5 @@ src/app/code/community/Diglin/Github	app/code/community/Diglin/Github
 src/app/deisgn/frontend/base/default/layout/github.xml	app/deisgn/frontend/base/default/layout/github.xml
 src/app/deisgn/frontend/base/default/template/github	app/deisgn/frontend/base/default/template/github
 src/lib/Oauth2	lib/Oauth2
+src/skin/frontend/base/default/images/github	skin/frontend/base/default/images/github
+src/app/locale/en_US/template/email/github	app/locale/en_US/template/email/github
