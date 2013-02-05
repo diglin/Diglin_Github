@@ -9,6 +9,13 @@ Magento module to allow users authenticate from Github account to your shop
 
 ## Documentation ##
 
+### Via modman ###
+- Install [modman](https://github.com/colinmollenhour/modman)
+- Use the command from your Magento installation folder: `modman clone https://github.com/diglin/Diglin_Github.git`
+
+### Manually
+- You can copy the files from the folders of this repository to the same folders of your installation
+
 ### Configuration ###
 
 - Create on Github an Application. In Github, go to your account settings > Applications > Register new application > 
@@ -16,3 +23,14 @@ Magento module to allow users authenticate from Github account to your shop
 - In Magento Backend, go to System > Configuration > Diglin > Github. If a 403 error occur, just logout and login and go back the configuration page. Provide into the configuration, the client id and the client secret provided by Github.
 - Save the configuration.
 - Voilà! That's all folks!
+
+## Author
+
+* Sylvain Rayé
+* http://www.sylvainraye.com/
+* [@sylvainraye](https://twitter.com/sylvainraye)
+* [Follow me on github!](https://github.com/diglin)
+
+## Donation
+
+[Invite me for a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Y66QHLU5VX5BC)
