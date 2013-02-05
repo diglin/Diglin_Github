@@ -9,7 +9,7 @@
     <default>
         <github>
             <config>
-                <enabled>1</enabled>
+                <enabled>0</enabled>
             </config>
             <link_account>
                 <email_identity>general</email_identity>
