@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Diglin
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ *
+ * @category    Diglin
+ * @package     Diglin_Github
+ * @copyright   Copyright (c) 2011-2013 Diglin (http://www.diglin.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<layout>
+    <github_account_create>
+        <label>Github Customer Account Registration Form</label>
+        <remove name="right" />
+        <remove name="left" />
+
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+
+        <reference name="content">
+            <block type="github/account_register" name="github_account_register" as="github.account.register" template="github/customer/create.phtml">
+                <block type="page/html_wrapper" name="customer.form.register.fields.before" as="form_fields_before" translate="label">
+                    <label>Form Fields Before</label>               
+                </block>
+                <block type="page/html_wrapper" name="customer.form.register.fields.after" as="form_fields_after" translate="label">
+                    <label>Form Fields After</label>               
+                    <block type="github/account_existing" name="github_existing_user" as="github.existing.user" template="github/customer/existing.phtml" />
+                </block>
+            </block>
+        </reference>
+    </github_account_create>
+
+    <customer_account_login>
+        <reference name="form.additional.info"><!-- Solution works for login with or w/o persistent module @see the login.phtml -->
+            <block type="core/template" name="login_github_button" as="login.github.button">
+                <block type="core/template" name="github_button" as="github.button" template="github/customer/button.phtml">
+                    <action method="setClassAlign"><class>a-left</class></action>
+                </block>
+                <action method="setTemplate" ifconfig="github/config/enabled">
+                    <template>github/customer/login.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </customer_account_login>
+
+    <customer_account_create>
+        <reference name="form.additional.info">
+            <block type="core/template" name="register_github_information" as="register.github.information">
+                <action method="setTemplate" ifconfig="github/config/enabled">
+                    <template>github/customer/fields.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </customer_account_create>
+    
+    <customer_account_index>
+        <reference name="customer_account_dashboard">
+            <block type="core/template" name="github_information" as="info1">
+                <action method="setTemplate" ifconfig="github/config/enabled">
+                    <template>github/customer/info.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </customer_account_index>
+    
+    <checkout_onepage_index>
+        <reference name="checkout.onepage.login.before">
+            <block type="core/template" name="login_github_button" as="login.github.button">
+                <block type="core/template" name="github_button" as="github.button" template="github/customer/button.phtml">
+                    <action method="setClassAlign"><class>a-left</class></action>
+                </block>
+                <action method="setTemplate" ifconfig="github/config/enabled">
+                    <template>github/customer/login.phtml</template>
+                </action>
+                <action method="setHeader"><header>3</header></action>
+            </block>
+        </reference>
+        
+<!-- FIX ME The solution below works but you have to care about the captcha - dependency!!! -->
+<!-- I tried to put the block login_github_button into the reference checkout.onepage.login > reference form.additional.info -->
+<!-- but it put it into checkout.onepage.billing cause of how the layout generates blocks. The block form.additional.info is generated twice in the handle checkout_onepage_index -->
+<!--         <reference name="checkout.onepage.login"> -->
+<!--             <block type="core/text_list" name="form.additional.info"> -->
+<!--                 <block type="captcha/captcha" name="captcha"> -->
+<!--                     <reference name="head"> -->
+<!--                         <action method="addJs"><file>mage/captcha.js</file></action> -->
+<!--                     </reference> -->
+<!--                     <action method="setFormId"><formId>user_login</formId></action> -->
+<!--                     <action method="setImgWidth"><width>230</width></action> -->
+<!--                     <action method="setImgHeight"><width>50</width></action> -->
+<!--                 </block> -->
+<!--                 <block type="core/template" name="login_github_button" as="login.github.button"> -->
+<!--                     <action method="setTemplate" ifconfig="github/config/enabled"> -->
+<!--                         <template>github/customer/login.phtml</template> -->
+<!--                     </action> -->
+<!--                 </block> -->
+<!--             </block> -->
+<!--         </reference> -->
+    </checkout_onepage_index>
+</layout>
