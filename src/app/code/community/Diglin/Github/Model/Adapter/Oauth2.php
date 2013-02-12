@@ -17,7 +17,7 @@
  */
 
 // Light Oauth2 Library located to /lib/Oauth2 of Magento installation
-require_once 'Oauth2/client.php';
+require_once 'Oauth2/Client.php';
 require_once 'Oauth2/GrantType/IGrantType.php';
 require_once 'Oauth2/GrantType/AuthorizationCode.php';
 
