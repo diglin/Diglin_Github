@@ -113,7 +113,7 @@ class Diglin_Github_AccountController extends Mage_Customer_AccountController
         // Check Man-In-The-Middle attack
         if ($returnedState != $state) {
             $this->_getSession()->addError($this->__('Sorry, we cannot accept this authentification. A problem occur during the communication with Github. Please, contact us.'));
-            Mage::log($this->__('Possible Hacker Attack during Github Autorization Process. Code: %s - State Returned: %s - State generated: %s', $code, $returnedState, $state), Zend_Log::ERR);
+            Diglin_Github_Model_Log::log($this->__('Possible Hacker Attack during Github Autorization Process. Code: %s - State Returned: %s - State generated: %s', $code, $returnedState, $state), Zend_Log::ERR);
             $this->_redirect('customer/account/login',  array('_secure' => true));
             return;
         }
@@ -145,15 +145,18 @@ class Diglin_Github_AccountController extends Mage_Customer_AccountController
 
         // 3) Get user data, save it in session to use it later
         $oauth->setAccessToken($token);
-        $response = $oauth->fetch($oauth::USER_PROFILE);
+        $response = $oauth->fetch($oauth::USER_PROFILE, array(), $oauth::HTTP_METHOD_GET, array('User-Agent' => $_SERVER["HTTP_USER_AGENT"]));// USER AGENT Required by Github
 
         if (empty($response['result']['id'])) {
-            $this->_getSession()->addError($this->__("You doesn't seem to be logged in Github. Please, login again."));
+            $this->_getSession()->addError($this->__("You don't seem to be logged in Github. Please, login again."));
+            Diglin_Github_Model_Log::log('Github Login problem ' . print_r($response, true));
             $this->_redirect('customer/account/login', array('_secure' => true));
             return;
         } else {
             $githubId = $response['result']['id'];
         }
+        
+        //Diglin_Github_Model_Log::log('Github Login Debug ' . print_r($response, true));
 
         // Save github user data in session
         $helper->setUserData($response['result']);
