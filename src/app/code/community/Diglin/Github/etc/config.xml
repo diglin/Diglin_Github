@@ -28,11 +28,16 @@
                 </github_login>
             </customer_account>
         </fieldsets>
-        
+
         <blocks>
             <github>
                 <class>Diglin_Github_Block</class>
             </github>
+            <adminhtml>
+                <rewrite>
+                    <customer_grid>Diglin_Github_Block_Adminhtml_Grid</customer_grid>
+                </rewrite>
+            </adminhtml>
         </blocks>
 
         <helpers>
@@ -105,4 +110,17 @@
             </modules>
         </translate>        
     </frontend>
+
+    <adminhtml>
+        <events>
+            <eav_collection_abstract_load_before>
+                <observers>
+                    <github_load_collection>
+                        <class>github/observer</class>
+                        <method>addAttributeToCollection</method>
+                    </github_load_collection>
+                </observers>
+            </eav_collection_abstract_load_before>
+        </events>
+    </adminhtml>
 </config>

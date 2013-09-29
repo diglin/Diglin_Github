@@ -448,10 +448,10 @@ class Client
         } else {
             // bypass ssl verification
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 1);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         }
         if (!empty($this->curl_options)) {
-            curl_setopt_array($this->curl_options);
+            curl_setopt_array($this->curl_options); // diglin - value 1 is deprecated and will be removed as of libcurl 7.28.1
         }
         $result = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
