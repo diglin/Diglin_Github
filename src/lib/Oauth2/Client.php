@@ -202,7 +202,7 @@ class Client
      * getAccessToken
      *
      * @param string $token_endpoint    Url of the token endpoint
-     * @param int    $grant_type        Grand Type ('authorization_code', 'password', 'client_credentials', 'refresh_token', or a custom code (@see GrantType Classes)
+     * @param int    $grant_type        Grant Type ('authorization_code', 'password', 'client_credentials', 'refresh_token', or a custom code (@see GrantType Classes)
      * @param array  $parameters        Array sent to the server (depend on which grant type you're using)
      * @return array Array of parameters required by the grant_type (CF SPEC)
      */
@@ -281,7 +281,7 @@ class Client
      * @param array $options An array specifying which options to set and their values
      * @return void
      */
-    public function setCurlOptions($options)
+    public function setCurlOptions($options) 
     {
         $this->curl_options = array_merge($this->curl_options, $options);
     }
@@ -409,7 +409,7 @@ class Client
                  * http://php.net/manual/en/function.curl-setopt.php
                  */
                 if(is_array($parameters) && self::HTTP_FORM_CONTENT_TYPE_APPLICATION === $form_content_type) {
-                    $parameters = http_build_query($parameters);
+                    $parameters = http_build_query($parameters, null, '&');
                 }
                 $curl_options[CURLOPT_POSTFIELDS] = $parameters;
                 break;
@@ -451,13 +451,13 @@ class Client
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 1);
         }
         if (!empty($this->curl_options)) {
-            curl_setopt_array($this->curl_options);
+            curl_setopt_array($ch, $this->curl_options);
         }
         $result = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
         if ($curl_error = curl_error($ch)) {
-            throw new Exception($curl_error . $http_code . print_r($curl_options, true), Exception::CURL_ERROR);
+            throw new Exception($curl_error, Exception::CURL_ERROR);
         } else {
             $json_decode = json_decode($result, true);
         }
